@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model MaintenanceRecord {
+  createdAt  DateTime @default(now())
+  flight     Flight?  @relation(fields: [flightId], references: [id])
+  flightId   String?
+  id         String   @id @default(cuid())
+  maintainer String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Aircraft {
+  aircraftName   String?  @unique
+  aircraftNumber String?
+  createdAt      DateTime @default(now())
+  id             String   @id @default(cuid())
+  updatedAt      DateTime @updatedAt
+}
+
+model Flight {
+  approvalComments   String?
+  approvalStatus     Boolean?
+  approveStatus      EnumFlightApproveStatus?
+  arrivalAirport     String?
+  arrivalTime        DateTime?
+  associatedPilot    String?
+  createdAt          DateTime                 @default(now())
+  departureAirport   String?
+  departureTime      DateTime?
+  flightNumber       String?
+  id                 String                   @id @default(cuid())
+  maintenanceRecords MaintenanceRecord[]
+  remark             String?
+  status             EnumFlightStatus?
+  updatedAt          DateTime                 @updatedAt
+}
+
+model Pilot {
+  createdAt     DateTime  @default(now())
+  id            String    @id @default(cuid())
+  pilotBirthday DateTime?
+  pilotName     String?
+  updatedAt     DateTime  @updatedAt
+}
+
+enum EnumFlightApproveStatus {
+  agreed
+  rejected
+}
+
+enum EnumFlightStatus {
+  Option1
+}
